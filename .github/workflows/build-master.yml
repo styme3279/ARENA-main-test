@@ -59,8 +59,16 @@ jobs:
             scripts/generate_master.sh --changed "${{ github.event.before }}" "${{ github.sha }}"
           fi
 
-      # Runs even if generation reported an error, so any sections that DID
-      # generate successfully are still committed (the job is still marked failed).
+      # Validate the freshly generated solutions are syntactically valid Python.
+      # (The auto-commit below uses GITHUB_TOKEN, which doesn't re-trigger the
+      # standalone check-solutions workflow, so we run the same check here.)
+      # Runs even if generation failed, so the job reflects all problems.
+      - name: Compile-check generated solutions
+        if: always()
+        run: python scripts/check_solutions_compile.py
+
+      # Runs even if generation/compile-check reported an error, so any sections
+      # that DID generate successfully are still committed (job stays marked failed).
       - name: Commit and push generated files
         if: always()
         run: |
