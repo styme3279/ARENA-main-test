@@ -35,6 +35,8 @@ MAIN = __name__ == "__main__"
 if MAIN:
     load_dotenv()
     
+    # Look for OPENROUTER_KEY
+    
     assert os.getenv("OPENROUTER_API_KEY") is not None, "You must set your OpenRouter API key - see instructions in dropdown"
     
     openrouter_client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1")
