@@ -1,30 +1,95 @@
-# Transient checkout of the master/source repo used during CI builds
-/_master/
+# Python Environment & Dependencies
+.venv
+.direnv
 
-# Python environment & caches
-.venv/
-.direnv/
+# Python Cache & Build Artifacts
+*__pycache__
 __pycache__/
-*.py[cod]
-*.pytest_cache/
-.ipynb_checkpoints/
+*.pytest_cache
 
-# Environment & secrets
+# Environment & Secrets
 .env
 secrets.toml
 id_rsa
 id_rsa.pub
 
-# IDE & editor
-.vscode/
+# IDE & Editor
+*.vscode
 
-# Models, data, media, logs (large / generated at runtime)
+# Models & Checkpoints
 models/
-*.pth
-wandb/
-*videos
-*logs
+*attn_only_2L_half.pth
 
-# NOTE: generated notebooks (*_exercises.ipynb, *_solutions.ipynb), solutions.py,
-# and instructions/pages/*.md are intentionally committed — they are the
-# runnable ARENA material this repo exists to publish.
+# Data Directories
+*data
+# Exception: Allow specific data directory
+!chapter1_transformer_interp/exercises/part32_function_vectors_and_model_steering/data
+
+# Logs & Monitoring
+*logs
+logs/
+*logs_from_solver_tests
+*wandb
+
+# Media Files
+*videos
+chapter1_transformer_interp/instructions/media/media
+talk-animation*
+
+# Generated & Temporary Files
+*generate_*.py
+*drafts
+*colab
+*chunk_*.txt
+*.chroma
+*ignore.ipynb
+*ignore.py
+*export.py
+changes.md
+*master*.md
+rephrase.py
+
+# Specific Project Directories
+*part4_rlhf2
+*part6_othellogpt/othello_world
+*part52_grokking_and_modular_arithmetic/Grokking
+*other_solns
+chapter1_transformer_interp/exercises/part42_function_vectors_and_model_steering/answers.py
+
+# Infrastructure
+infrastructure/js
+infrastructure/deception-detection/
+infrastructure/context
+infrastructure/chapters/**/**/**/context_*.md
+infrastructure/chapters/**/**/context_*.md
+infrastructure/chapters/**/context_*.md
+demos
+llm_context
+infrastructure/core/ai-detector
+logic
+
+# Notebooks & Scripts
+*interp_on_model*.ipynb
+*interp_on_model*.py
+my_regex.py
+*stats.md
+
+# Temporary/Old Directories
+october23_duplicate_zeros
+january24_arena
+november24_bigrams
+
+# Cloned exernal repos
+chapter4_alignment_science/exercises/ai-psychosis
+chapter4_alignment_science/exercises/assistant-axis
+chapter4_alignment_science/exercises/persona_vectors
+chapter4_alignment_science/exercises/eliciting-secrets
+chapter4_alignment_science/exercises/petri
+chapter4_alignment_science/exercises/thought-anchors
+chapter1_transformer_interp/exercises/geometry-of-truth
+chapter1_transformer_interp/exercises/deception-detection
+chapter1_transformer_interp/exercises/circuit-tracer
+
+# local scratch
+chapter2_rl/exercises/part5_mcts_alphazero/exercises.py
+student_*.py

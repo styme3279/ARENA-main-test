@@ -5,7 +5,7 @@ through several stages before surfacing as a confusing downstream error.
 They run without API access (sandbox tests use inspect_ai's local sandbox
 plus the mockllm model).
 """
-#test
+
 from __future__ import annotations
 
 import asyncio
