@@ -91,14 +91,18 @@ for ch in "${CHAPTERS[@]}"; do
 done
 popd >/dev/null
 
+# Mirror ONLY the chapters we actually built. Mirroring a chapter we didn't
+# build would `--delete` its generated output in dest (it's absent from the
+# fresh master checkout). CHAPTER_DIRS is indexed by chapter number (0-4).
 echo "==> Syncing runnable material into $DEST_DIR"
-for ch in "${CHAPTER_DIRS[@]}"; do
-  if [ -d "$MASTER_DIR/$ch" ]; then
+for ch in "${CHAPTERS[@]}"; do
+  dir="${CHAPTER_DIRS[$ch]:-}"
+  if [ -n "$dir" ] && [ -d "$MASTER_DIR/$dir" ]; then
     rsync -a --delete \
       --exclude='__pycache__/' \
       --exclude='*.pyc' \
       --exclude='.ipynb_checkpoints/' \
-      "$MASTER_DIR/$ch/" "$DEST_DIR/$ch/"
+      "$MASTER_DIR/$dir/" "$DEST_DIR/$dir/"
   fi
 done
 
