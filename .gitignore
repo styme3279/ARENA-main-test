@@ -1,0 +1,30 @@
+# Transient checkout of the master/source repo used during CI builds
+/_master/
+
+# Python environment & caches
+.venv/
+.direnv/
+__pycache__/
+*.py[cod]
+*.pytest_cache/
+.ipynb_checkpoints/
+
+# Environment & secrets
+.env
+secrets.toml
+id_rsa
+id_rsa.pub
+
+# IDE & editor
+.vscode/
+
+# Models, data, media, logs (large / generated at runtime)
+models/
+*.pth
+wandb/
+*videos
+*logs
+
+# NOTE: generated notebooks (*_exercises.ipynb, *_solutions.ipynb), solutions.py,
+# and instructions/pages/*.md are intentionally committed — they are the
+# runnable ARENA material this repo exists to publish.
