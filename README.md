@@ -47,14 +47,26 @@ install.sh                    One-shot environment setup
 | `ARENA_master_test` | `.github/workflows/notify-main.yml` | On push to `main`, sends a `repository_dispatch` (`master-push`) to this repo. |
 | `ARENA-main-test` (here) | `.github/workflows/build-from-master.yml` | Checks out the master repo, runs the conversion tool over every chapter, and commits the regenerated notebooks/pages back here. |
 
-The build itself is `scripts/build_and_sync.sh`, which drives
-`infrastructure/core/main.py` from the master repo over chapters `0`–`4` and
-copies the runnable output (chapters + `requirements.txt`, `install.sh`,
-`pyproject.toml`, `.streamlit/`, `.devcontainer/`, …) into this repo.
+### Incremental vs. full builds
 
-You can also trigger a rebuild manually from the **Actions** tab
-(*Build ARENA from master* → *Run workflow*), optionally choosing which chapters
-or which master ref to build from.
+A push to master sends the commit range (`before`..`after`), and the builder
+rebuilds **only what changed** (`scripts/incremental_build.sh`):
+
+* an edited `master_X_Y.{py,ipynb}` → only section `X.Y` is regenerated and its
+  output copied over;
+* an edited support/runtime file (`tests.py`, `utils.py`, data, `requirements.txt`,
+  `.streamlit/`, …) → that file is copied/deleted directly, no rebuild;
+* a change to the conversion tool or `config.yaml` (`infrastructure/core/**`), or
+  an unusable commit range → it falls back to a **full rebuild**.
+
+Manual and scheduled runs always do a full rebuild via `scripts/build_and_sync.sh`,
+which drives `infrastructure/core/main.py` over chapters `0`–`4` and copies the
+runnable output (chapters + `requirements.txt`, `install.sh`, `pyproject.toml`,
+`.streamlit/`, `.devcontainer/`, …) into this repo.
+
+You can trigger a rebuild manually from the **Actions** tab (*Build ARENA from
+master* → *Run workflow*), optionally choosing which chapters or which master ref
+to build from.
 
 ### One-time setup
 
