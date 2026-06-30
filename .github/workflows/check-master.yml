@@ -1,16 +1,16 @@
 name: Check master builds
 
-# On a push to any branch other than main, regenerate the changed section(s)
-# from their master files to verify they build without errors. This is a
-# dry-run gate: it does NOT commit anything back — it only reports pass/fail.
+# Validates a PR before merge: regenerate the section(s) whose master files the
+# PR changes, to verify they build without errors. This is a dry-run gate — it
+# does NOT commit anything, it only reports pass/fail as a check on the PR.
 #
-# Pushes to main are handled by build-master.yml instead, which regenerates AND
-# commits the outputs. This workflow is deliberately read-only (see permissions)
-# so it can never write to a branch.
+# GitHub checks out the PR's merge result (PR merged into main) by default, so
+# this reflects what build-master.yml will actually do on main after merge.
+# Pushes to main are handled by build-master.yml, which regenerates AND commits.
 
 on:
-  push:
-    branches-ignore:
+  pull_request:
+    branches:
       - main
     paths:
       - 'infrastructure/chapters/**/master_*.py'
@@ -21,8 +21,8 @@ permissions:
   contents: read
 
 concurrency:
-  # Supersede an in-flight check if the branch is pushed again.
-  group: check-master-${{ github.ref }}
+  # Supersede an in-flight check if the PR is pushed again.
+  group: check-master-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # need history to diff the pushed commit range
+          fetch-depth: 0   # need full history to diff base..head
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,10 +45,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml tabulate
 
-      # Regenerate the changed section(s) in the ephemeral runner checkout only.
-      # generate_master.sh exits non-zero if any section errors, which fails the
-      # job. There is no commit step, so nothing is written back to the branch.
+      # Regenerate the section(s) whose master files changed in this PR, in the
+      # ephemeral runner checkout only. We diff base..head to select exactly the
+      # sections this PR touches. generate_master.sh exits non-zero if any
+      # section errors, which fails the check. There is no commit step, so
+      # nothing is ever written back.
       - name: Regenerate changed sections (no commit)
         run: |
           chmod +x scripts/generate_master.sh
-          scripts/generate_master.sh --changed "${{ github.event.before }}" "${{ github.sha }}"
+          scripts/generate_master.sh --changed \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}"
