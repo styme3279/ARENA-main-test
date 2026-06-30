@@ -1,0 +1,54 @@
+name: Check master builds
+
+# On a push to any branch other than main, regenerate the changed section(s)
+# from their master files to verify they build without errors. This is a
+# dry-run gate: it does NOT commit anything back — it only reports pass/fail.
+#
+# Pushes to main are handled by build-master.yml instead, which regenerates AND
+# commits the outputs. This workflow is deliberately read-only (see permissions)
+# so it can never write to a branch.
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'infrastructure/chapters/**/master_*.py'
+      - 'infrastructure/chapters/**/master_*.ipynb'
+
+# Read-only: this job must never write to the repo.
+permissions:
+  contents: read
+
+concurrency:
+  # Supersede an in-flight check if the branch is pushed again.
+  group: check-master-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need history to diff the pushed commit range
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # The conversion tool only needs these (no torch/CUDA stack).
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml tabulate
+
+      # Regenerate the changed section(s) in the ephemeral runner checkout only.
+      # generate_master.sh exits non-zero if any section errors, which fails the
+      # job. There is no commit step, so nothing is written back to the branch.
+      - name: Regenerate changed sections (no commit)
+        run: |
+          chmod +x scripts/generate_master.sh
+          scripts/generate_master.sh --changed "${{ github.event.before }}" "${{ github.sha }}"
