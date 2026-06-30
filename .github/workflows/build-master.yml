@@ -59,10 +59,10 @@ jobs:
             scripts/generate_master.sh --changed "${{ github.event.before }}" "${{ github.sha }}"
           fi
 
-      # Runs even if generation reported an error, so any sections that DID
-      # generate successfully are still committed (job stays marked failed).
+      # Only runs if generation fully succeeded (the step above exits non-zero
+      # if any section errored). All-or-nothing: a failed build commits nothing,
+      # so main never gets partial/half-generated output.
       - name: Commit and push generated files
-        if: always()
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
