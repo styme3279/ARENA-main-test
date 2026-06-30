@@ -27,7 +27,7 @@ r'''
 <img src="https://raw.githubusercontent.com/info-arena/ARENA_img/main/misc/headers/header-00.png" width="350">
 '''
 
-# ! CELL TYPE: markdown
+# ! CELL TYPE: bogus_broken_type
 # ! FILTERS: []
 # ! TAGS: []
 
