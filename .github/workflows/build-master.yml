@@ -50,15 +50,15 @@ jobs:
 
       - name: Generate outputs from master files
         run: |
-          chmod +x scripts/generate_master.sh
+          chmod +x infrastructure/core/scripts/generate_master.sh
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             if [ "${{ github.event.inputs.chapters }}" = "all" ]; then
-              scripts/generate_master.sh --all
+              infrastructure/core/scripts/generate_master.sh --all
             else
-              scripts/generate_master.sh ${{ github.event.inputs.chapters }}
+              infrastructure/core/scripts/generate_master.sh ${{ github.event.inputs.chapters }}
             fi
           else
-            scripts/generate_master.sh --changed "${{ github.event.before }}" "${{ github.sha }}"
+            infrastructure/core/scripts/generate_master.sh --changed "${{ github.event.before }}" "${{ github.sha }}"
           fi
 
       # Only runs if generation fully succeeded (the step above exits non-zero

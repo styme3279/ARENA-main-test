@@ -52,7 +52,7 @@ jobs:
       # nothing is ever written back.
       - name: Regenerate changed sections (no commit)
         run: |
-          chmod +x scripts/generate_master.sh
-          scripts/generate_master.sh --changed \
+          chmod +x infrastructure/core/scripts/generate_master.sh
+          infrastructure/core/scripts/generate_master.sh --changed \
             "${{ github.event.pull_request.base.sha }}" \
             "${{ github.event.pull_request.head.sha }}"
