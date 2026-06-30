@@ -1,14 +1,16 @@
 name: Build from master files
 
 # When a master file (infrastructure/chapters/**/master_X_Y.{py,ipynb}) is
-# pushed, regenerate that section's outputs — solutions.py, the Streamlit .md/.py
-# pages, and the exercise/solution notebooks — and commit them back.
+# pushed to main, regenerate that section's outputs — solutions.py, the Streamlit
+# .md/.py pages, and the exercise/solution notebooks — and commit them back.
 #
 # The generated files are not master files, so the bot's commit does not match
 # the path filter below and cannot re-trigger this workflow.
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'infrastructure/chapters/**/master_*.py'
       - 'infrastructure/chapters/**/master_*.ipynb'
